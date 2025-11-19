@@ -67,30 +67,45 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata
-        id: meta
+      - name: Extract metadata for C# image
+        id: meta-csharp
         uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
         with:
           images: ghcr.io/${{ github.repository }}
-      - name: Build and push
+          flavor: |
+            suffix=-csharp,onlatest=true
+          labels: |
+            org.opencontainers.image.title=devtron-lab C# API
+            org.opencontainers.image.description=C# ASP.NET Core API server implementation with NativeAOT
+      - name: Extract metadata for Go image
+        id: meta-go
+        uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
+        with:
+          images: ghcr.io/${{ github.repository }}
+          flavor: |
+            suffix=-go,onlatest=true
+          labels: |
+            org.opencontainers.image.title=devtron-lab Go API
+            org.opencontainers.image.description=Go API server implementation
+      - name: Build and push C# image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: ./CSharp
           file: ./CSharp/Api/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
-          tags: ${{ steps.meta.outputs.tags }}-csharp
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Build and push
+          tags: ${{ steps.meta-csharp.outputs.tags }}
+          labels: ${{ steps.meta-csharp.outputs.labels }}
+          cache-from: type=gha,scope=csharp
+          cache-to: type=gha,mode=max,scope=csharp
+      - name: Build and push Go image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: ./Go
           file: ./Go/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
-          tags: ${{ steps.meta.outputs.tags }}-go
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta-go.outputs.tags }}
+          labels: ${{ steps.meta-go.outputs.labels }}
+          cache-from: type=gha,scope=go
+          cache-to: type=gha,mode=max,scope=go
