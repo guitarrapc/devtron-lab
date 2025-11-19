@@ -75,7 +75,7 @@ jobs:
           flavor: |
             suffix=-csharp,onlatest=true
           labels: |
-            org.opencontainers.image.title=devtron-lab C# API
+            org.opencontainers.image.title=${{ github.repository }} C# API
             org.opencontainers.image.description=C# ASP.NET Core API server implementation with NativeAOT
       - name: Extract metadata for Go image
         id: meta-go
@@ -85,7 +85,7 @@ jobs:
           flavor: |
             suffix=-go,onlatest=true
           labels: |
-            org.opencontainers.image.title=devtron-lab Go API
+            org.opencontainers.image.title=${{ github.repository }} Go API
             org.opencontainers.image.description=Go API server implementation
       - name: Build and push C# image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
