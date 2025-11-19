@@ -38,17 +38,17 @@ app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
-    public static readonly string[] Summaries = [ "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
+    public static readonly string[] Summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
-internal record MachineInformation(string MachineName, string OSDescription, int ProcessorCount, long TotalMemoryInMB)
+internal record MachineInformation(string MachineName, string OSDescription, int ProcessorCount, long UsedMemoryInMB)
 {
     public static MachineInformation Default { get; } = new MachineInformation(
         Environment.MachineName,
         System.Runtime.InteropServices.RuntimeInformation.OSDescription,
         Environment.ProcessorCount,
-        GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / (1024 * 1024)
+        GC.GetTotalMemory(false) / (1024 * 1024)
     );
 }
 
@@ -56,5 +56,4 @@ internal record MachineInformation(string MachineName, string OSDescription, int
 [System.Text.Json.Serialization.JsonSerializable(typeof(MachineInformation))]
 internal partial class AppJsonSerializerContext : System.Text.Json.Serialization.JsonSerializerContext
 {
-
 }

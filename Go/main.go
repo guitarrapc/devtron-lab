@@ -11,10 +11,10 @@ import (
 )
 
 type MachineInformation struct {
-	MachineName     string `json:"machineName"`
-	OSDescription   string `json:"osDescription"`
-	ProcessorCount  int    `json:"processorCount"`
-	TotalMemoryInMB int64  `json:"totalMemoryInMB"`
+	MachineName    string `json:"machineName"`
+	OSDescription  string `json:"osDescription"`
+	ProcessorCount int    `json:"processorCount"`
+	UsedMemoryInMB int64  `json:"usedMemoryInMB"`
 }
 
 type WeatherForecast struct {
@@ -52,10 +52,10 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	runtime.ReadMemStats(&m)
 
 	info := MachineInformation{
-		MachineName:     hostname,
-		OSDescription:   runtime.GOOS + " " + runtime.GOARCH,
-		ProcessorCount:  runtime.NumCPU(),
-		TotalMemoryInMB: int64(m.Sys / (1024 * 1024)),
+		MachineName:    hostname,
+		OSDescription:  runtime.GOOS + " " + runtime.GOARCH,
+		ProcessorCount: runtime.NumCPU(),
+		UsedMemoryInMB: int64(m.Alloc / (1024 * 1024)),
 	}
 
 	json.NewEncoder(w).Encode(info)
